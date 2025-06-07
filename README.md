@@ -10,7 +10,7 @@
 2. **Откройте редактор VBA** клавишами `Alt + F11`.
 3. **Импортируйте файлы** из папки `src` этого репозитория:
    - В обозревателе проекта выберите книгу, щёлкните правой кнопкой мыши и нажмите **Импорт файла...**.
-   - Укажите `Permissions.bas`, `Logging.bas` и `Utility.bas`.
+   - Укажите `Permissions.bas`, `Logging.bas`, `Utility.bas`, `frmLogin.frm` и `ThisWorkbook.cls`.
 4. Сохраните книгу как файл с поддержкой макросов (`.xlsm`).
 
 ## Модули
@@ -18,15 +18,21 @@
 - **Permissions** – управление доступом к листам и диапазонам, а также восстановление заблокированных ячеек.
 - **Logging** – ведёт журналы входов пользователей и изменений данных.
 - **Utility** – функции общего назначения: проверка наличия листов, чтение пароля, начальная подготовка рабочих листов.
+- **frmLogin** – форма авторизации пользователей и управления списком пользователей.
 
 ### Пример кода в `ThisWorkbook`
 ```vba
 Private Sub Workbook_Open()
     InitializeGlobals
-    Dim info As Variant
-    info = GetUserInfo(Environ("Username"))
-    ApplyPermissions Environ("Username"), info(1), info(2), info(3)
-    LogLogin Environ("Username"), "open", ""
+    frmLogin.Show
+    If frmLogin.IsAuthenticated Then
+        Dim info As Variant
+        info = frmLogin.UserInfo
+        ApplyPermissions frmLogin.Username, info(1), info(2), info(3)
+        LogLogin frmLogin.Username, "open", ""
+    Else
+        ThisWorkbook.Close False
+    End If
 End Sub
 
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
