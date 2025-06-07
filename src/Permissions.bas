@@ -1,6 +1,6 @@
 Option Explicit
 
-' Снятие защиты со всех листов (и раскрытие их)
+'      (  )
 Public Sub UnprotectAllSheets(Optional wb As Workbook)
     Dim ws As Worksheet
     If wb Is Nothing Then Set wb = ThisWorkbook
@@ -12,13 +12,13 @@ Public Sub UnprotectAllSheets(Optional wb As Workbook)
     Next ws
 End Sub
 
-' Получение данных пользователя из листа "ПраваДоступа"
+'      ""
 Public Function GetUserInfo(ByVal username As String) As Variant
     Dim ws As Worksheet
     Dim lastRow As Long, i As Long
     Dim result(0 To 3) As Variant
     On Error Resume Next
-    Set ws = ThisWorkbook.Sheets("ПраваДоступа")
+    Set ws = ThisWorkbook.Sheets("")
     On Error GoTo 0
     If ws Is Nothing Then
         result(0) = ""
@@ -42,7 +42,7 @@ Public Function GetUserInfo(ByVal username As String) As Variant
     GetUserInfo = Null
 End Function
 
-' Проверка попадания ячейки в разрешённые диапазоны
+'      
 Public Function IsCellInAllowedRange(ByVal cell As Range, ByVal allowedRanges As String) As Boolean
     Dim arr() As String, part As Variant, rngAllowed As Range
     Dim wsName As String, rngAddress As String
@@ -74,7 +74,7 @@ Public Function IsCellInAllowedRange(ByVal cell As Range, ByVal allowedRanges As
     IsCellInAllowedRange = False
 End Function
 
-' Запись информации о заблокированной ячейке
+'     
 Public Sub RecordLockedCell(ByVal targetCell As Range)
     Dim wsLocked As Worksheet
     Dim lastRow As Long, i As Long
@@ -97,7 +97,7 @@ Public Sub RecordLockedCell(ByVal targetCell As Range)
     End If
 End Sub
 
-' Восстановление блокировок при открытии книги
+'     
 Public Sub ReapplyLockedCells()
     Dim wsLocked As Worksheet
     Dim lastRow As Long, i As Long
@@ -120,7 +120,7 @@ Public Sub ReapplyLockedCells()
     Next i
 End Sub
 
-' Разблокировка ячейки (для администратора)
+'   ( )
 Public Sub AdminUnlockCell(ByVal sheetName As String, ByVal cellAddress As String)
     Dim ws As Worksheet, wsLocked As Worksheet
     Dim lastRow As Long, i As Long
@@ -141,7 +141,7 @@ Public Sub AdminUnlockCell(ByVal sheetName As String, ByVal cellAddress As Strin
     ws.Protect Password:=GetProtectionPassword(), UserInterfaceOnly:=True
 End Sub
 
-' Основное применение прав доступа
+'    
 Public Sub ApplyPermissions(username As String, role As String, accessSheets As String, editRanges As String)
     Dim ws As Worksheet
     Dim firstVisibleSheet As Worksheet
@@ -149,7 +149,7 @@ Public Sub ApplyPermissions(username As String, role As String, accessSheets As 
     Dim wb As Workbook
     Set wb = ThisWorkbook
 
-    ' Сначала делаем листы видимыми и снимаем защиту
+    '       
     For Each ws In wb.Worksheets
         ws.Visible = xlSheetVisible
         On Error Resume Next
@@ -157,11 +157,11 @@ Public Sub ApplyPermissions(username As String, role As String, accessSheets As 
         On Error GoTo 0
     Next ws
 
-    If SheetExists("СТАРТ", wb) Then
+    If SheetExists("", wb) Then
         If LCase(role) = "admin" Then
-            wb.Sheets("СТАРТ").Visible = xlSheetVisible
+            wb.Sheets("").Visible = xlSheetVisible
         Else
-            wb.Sheets("СТАРТ").Visible = xlSheetVeryHidden
+            wb.Sheets("").Visible = xlSheetVeryHidden
         End If
     End If
 
@@ -171,7 +171,7 @@ Public Sub ApplyPermissions(username As String, role As String, accessSheets As 
             If firstVisibleSheet Is Nothing Then Set firstVisibleSheet = ws
         Next ws
     Else
-        adminSheets = Array("ПраваДоступа", "ЛогВхода", "ЛогИзменений", "LockedCells")
+        adminSheets = Array("", "", "", "LockedCells")
         Dim i As Long
         For i = LBound(adminSheets) To UBound(adminSheets)
             If SheetExists(adminSheets(i), wb) Then
@@ -180,21 +180,21 @@ Public Sub ApplyPermissions(username As String, role As String, accessSheets As 
         Next i
 
         For Each ws In wb.Worksheets
-            If ws.Visible = xlSheetVisible And IsError(Application.Match(ws.Name, adminSheets, 0)) And ws.Name <> "СТАРТ" Then
+            If ws.Visible = xlSheetVisible And IsError(Application.Match(ws.Name, adminSheets, 0)) And ws.Name <> "" Then
                 Set firstVisibleSheet = ws
                 Exit For
             End If
         Next ws
 
         If firstVisibleSheet Is Nothing Then
-            MsgBox "Нет доступных листов для отображения! Проверьте права доступа.", vbCritical
+            MsgBox "    !   .", vbCritical
             Exit Sub
         End If
 
         firstVisibleSheet.Activate
 
         For Each ws In wb.Worksheets
-            If IsError(Application.Match(ws.Name, adminSheets, 0)) And ws.Name <> "СТАРТ" Then
+            If IsError(Application.Match(ws.Name, adminSheets, 0)) And ws.Name <> "" Then
                 If Not ws Is wb.ActiveSheet Then
                     ws.Visible = xlSheetVeryHidden
                 End If
@@ -203,7 +203,7 @@ Public Sub ApplyPermissions(username As String, role As String, accessSheets As 
 
         If Trim(accessSheets) = "*" Then
             For Each ws In wb.Worksheets
-                If IsError(Application.Match(ws.Name, adminSheets, 0)) And ws.Name <> "СТАРТ" Then
+                If IsError(Application.Match(ws.Name, adminSheets, 0)) And ws.Name <> "" Then
                     ws.Visible = xlSheetVisible
                 End If
             Next ws
@@ -221,7 +221,7 @@ Public Sub ApplyPermissions(username As String, role As String, accessSheets As 
     If Not firstVisibleSheet Is Nothing Then
         firstVisibleSheet.Activate
     Else
-        MsgBox "Нет доступных листов для отображения после применения прав. Проверьте настройки.", vbCritical
+        MsgBox "       .  .", vbCritical
     End If
 
     For Each ws In wb.Worksheets

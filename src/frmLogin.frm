@@ -104,7 +104,7 @@ Private Sub btnOK_Click()
     End If
     loginOK = False
     LogLogin Username, "fail", "invalid credentials"
-    MsgBox "Неверное имя пользователя или пароль", vbCritical
+    MsgBox "    ", vbCritical
 End Sub
 
 Private Sub btnCancel_Click()
@@ -118,13 +118,13 @@ Private Sub btnManageUsers_Click()
     If IsArray(info) Then
         If Trim(info(0)) = Trim(Me.txtPassword.Value) And LCase(info(1)) = "admin" Then
             Dim ws As Worksheet
-            Set ws = EnsureSheetExists("ПраваДоступа", Array("Username", "Password", "Role", "Sheets", "Ranges"))
+            Set ws = EnsureSheetExists("", Array("Username", "Password", "Role", "Sheets", "Ranges"))
             ws.Visible = xlSheetVisible
             ws.Activate
         Else
-            MsgBox "Только администратор может управлять пользователями", vbInformation
+            MsgBox "    ", vbInformation
         End If
     Else
-        MsgBox "Пользователь не найден", vbCritical
+        MsgBox "  ", vbCritical
     End If
 End Sub

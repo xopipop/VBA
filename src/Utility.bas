@@ -1,6 +1,6 @@
 Option Explicit
 
-' Проверяет существование листа и возвращает True/False
+'      True/False
 Public Function SheetExists(ByVal sheetName As String, Optional wb As Workbook) As Boolean
     Dim ws As Worksheet
     If wb Is Nothing Then Set wb = ThisWorkbook
@@ -10,14 +10,14 @@ Public Function SheetExists(ByVal sheetName As String, Optional wb As Workbook) 
     On Error GoTo 0
 End Function
 
-' Читает пароль защиты из листа "ПраваДоступа" ячейки B1
+'      ""  B1
 Public Function GetProtectionPassword() As String
     On Error Resume Next
-    GetProtectionPassword = ThisWorkbook.Sheets("ПраваДоступа").Range("B1").Value
+    GetProtectionPassword = ThisWorkbook.Sheets("").Range("B1").Value
     On Error GoTo 0
 End Function
 
-' Создаёт лист с указанными заголовками при отсутствии
+'       
 Public Function EnsureSheetExists(ByVal sheetName As String, headers As Variant, Optional veryHidden As Boolean = False) As Worksheet
     Dim ws As Worksheet
     If SheetExists(sheetName) Then
@@ -34,10 +34,10 @@ Public Function EnsureSheetExists(ByVal sheetName As String, headers As Variant,
     Set EnsureSheetExists = ws
 End Function
 
-' Подготавливает вспомогательные листы для работы системы
+'      
 Public Sub InitializeGlobals()
-    Call EnsureSheetExists("ЛогВхода", Array("Timestamp", "User", "Result", "Comment"))
-    Call EnsureSheetExists("ЛогИзменений", Array("Timestamp", "User", "Sheet", "Address", "OldValue", "NewValue"))
+    Call EnsureSheetExists("", Array("Timestamp", "User", "Result", "Comment"))
+    Call EnsureSheetExists("", Array("Timestamp", "User", "Sheet", "Address", "OldValue", "NewValue"))
     Call EnsureSheetExists("LockedCells", Array("Sheet", "Address", "Timestamp"), True)
 End Sub
 
